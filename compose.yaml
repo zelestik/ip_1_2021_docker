@@ -1,0 +1,66 @@
+version: '3.8'
+services:
+    ip_admins_interface:
+        container_name: ip_admins_interface
+        build: ./admins_interface
+        ports:
+            - "5101:80"
+
+    ip_clients:
+        container_name: ip_clients
+        build: ./clients
+        ports:
+            - "5005:80"
+    
+    ip_couriers:
+        container_name: ip_couriers
+        build: ./couriers
+        ports:
+            - "5004:80"
+    
+    ip_orders:
+        container_name: ip_orders
+        build: ./orders
+        ports:
+            - "5003:80"
+    
+    rabbit_mq:
+        image: "rabbitmq"
+        container_name: rabbit_mq
+        ports:
+            - "15691:15691"
+            - "15692:15692"
+            - "25672:25672"
+            - "4369:4369"
+            - "5671:5671"
+            - "5672:5672"
+    
+    ip_signs:
+        container_name: ip_signs
+        build: ./signs
+        depends_on: 
+           - rabbit_mq
+    
+    ip_admins_db:
+        container_name: ip_admins_db
+        build: ./ip_admins_db
+        ports:
+            - "3308:3306"
+    
+    ip_clients_db:
+        container_name: ip_clients_db
+        build: ./ip_clients_db
+        ports:
+            - "3309:3306"
+
+    ip_couriers_db:
+        container_name: ip_couriers_db
+        build: ./ip_couriers_db
+        ports:
+            - "3310:3306"
+
+    ip_orders_db:
+        container_name: ip_orders_db
+        build: ./ip_orders_db
+        ports:
+            - "3307:3306"
