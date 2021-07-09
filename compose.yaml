@@ -9,31 +9,24 @@ services:
     ip_clients:
         container_name: ip_clients
         build: ./clients
-        ports:
-            - "5005:80"
     
     ip_couriers:
         container_name: ip_couriers
         build: ./couriers
-        ports:
-            - "5004:80"
     
     ip_orders:
         container_name: ip_orders
         build: ./orders
+    
+    ip_couriers_interface:
+        container_name: ip_couriers_interface
+        build: ./couriers_interface
         ports:
-            - "5003:80"
+            - "5102:80"
     
     rabbit_mq:
         image: "rabbitmq"
         container_name: rabbit_mq
-        ports:
-            - "15691:15691"
-            - "15692:15692"
-            - "25672:25672"
-            - "4369:4369"
-            - "5671:5671"
-            - "5672:5672"
     
     ip_signs:
         container_name: ip_signs

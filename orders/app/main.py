@@ -191,11 +191,16 @@ def get_orders_admin(id_client: int) -> list:
 
 
 @jsonrpc.method('App.post_order')
-def post_order_admin(client_id: int, sender_adr: str, sender_comment: str, sender_name: str, sender_coord_1: float, sender_coord_2: float, sender_phone: str,
-                    receiver_adr: str, receiver_comment: str, receiver_name: str, receiver_coord_1: float, receiver_coord_2: float, receiver_phone: str,
-                    cost: float) -> Union[str, None]:
+def post_order_admin(client_id: int, sender_adr: str, sender_comment: str, sender_name: str, sender_coord_1: str, sender_coord_2: str, sender_phone: str,
+                    receiver_adr: str, receiver_comment: str, receiver_name: str, receiver_coord_1: str, receiver_coord_2: str, receiver_phone: str,
+                    cost: str) -> Union[str, None]:
     data_dict = []
     try:
+        sender_coord_1 = float(sender_coord_1)
+        sender_coord_2 = float(sender_coord_2)
+        receiver_coord_1 = float(receiver_coord_1)
+        receiver_coord_2 = float(receiver_coord_2)
+        cost = float(cost)
         conn = mysql.connect()
         cursor = conn.cursor()
         cursor.execute("""INSERT INTO addresses (id_client, str_adr, comment, full_name, geo_code_1, geo_code_2, phone)
@@ -220,12 +225,14 @@ def post_order_admin(client_id: int, sender_adr: str, sender_comment: str, sende
             print(str(data[0][0]))                    
             return str(data[0][0])
         else:
+            print(1)
             return None
     except Exception as e:
+        print(str(e))
         return None
 
 
 
 # Точка входа
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=False)
+    app.run(host="localhost", port=5000, debug=False)

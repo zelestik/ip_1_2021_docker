@@ -29,7 +29,7 @@ def save_sign(sign, order_num):
 
 def main():
     try:
-        connection = pika.BlockingConnection(pika.ConnectionParameters(host='host.docker.internal'))
+        connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbit_mq'))
         channel = connection.channel()
 
         channel.queue_declare(queue='save_sign')

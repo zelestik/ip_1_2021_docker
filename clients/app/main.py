@@ -32,7 +32,7 @@ def get_client(client_email: str, client_phone: str) -> Union[dict, None]:
     data_dict = {}
     if len(data) > 0:
         try:
-            orders = request("http://host.docker.internal:5003/orders", "App.get_client_orders",id_client=data[0][3]).data.result
+            orders = request("http://ip_orders/orders", "App.get_client_orders",id_client=data[0][3]).data.result
         except Exception as e:
             # Возвращаем пустой массив?
             orders = []

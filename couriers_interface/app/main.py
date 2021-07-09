@@ -9,7 +9,7 @@ wsgi_app = app.wsgi_app
 
 
 def login_courier(password, phone):
-    return req("http://host.docker.internal:5004/couriers", "App.login_courier", password=password, phone=phone).data.result
+    return req("http://ip_couriers/couriers", "App.login_courier", password=password, phone=phone).data.result
 
 
 @app.route('/login_courier/<string:phone>/<string:password>')
@@ -25,14 +25,14 @@ def login_courier_web(phone, password):
 def get_courier_free_orders(phone_num, password):
     data_dict = login_courier(password, phone_num)
     if data_dict != None:
-        return jsonify(req("http://host.docker.internal:5003/orders", "App.get_courier_free_orders").data.result)
+        return jsonify(req("http://ip_orders/orders", "App.get_courier_free_orders").data.result)
     return "-1"
 
 @app.route('/get_order_details/<string:phone_num>/<string:password>/<int:order_num>')
 def get_order_details(phone_num, password, order_num):
     data_dict = login_courier(password, phone_num)
     if data_dict != None:
-        return jsonify(req("http://host.docker.internal:5003/orders", "App.get_order_details", order_num=order_num).data.result)
+        return jsonify(req("http://ip_orders/orders", "App.get_order_details", order_num=order_num).data.result)
     return "-1"
 
 
@@ -40,7 +40,7 @@ def get_order_details(phone_num, password, order_num):
 def take_order(phone_num, password, order_num):
     data_dict = login_courier(password, phone_num)
     if data_dict != None:
-        return req("http://host.docker.internal:5003/orders", "App.take_order", order_num=order_num, courier_id=data_dict["id"]).data.result
+        return req("http://ip_orders/orders", "App.take_order", order_num=order_num, courier_id=data_dict["id"]).data.result
     return "-1"
 
 
@@ -49,7 +49,7 @@ def take_order(phone_num, password, order_num):
 def take_parcel(phone_num, password, order_num):
     data_dict = login_courier(password, phone_num)
     if data_dict != None:
-        return req("http://host.docker.internal:5003/orders", "App.take_parcel", order_num=order_num, courier_id=data_dict["id"]).data.result
+        return req("http://ip_orders/orders", "App.take_parcel", order_num=order_num, courier_id=data_dict["id"]).data.result
     return "-1"
     
 
@@ -57,7 +57,7 @@ def take_parcel(phone_num, password, order_num):
 def close_order(phone_num, password, order_num):
     data_dict = login_courier(password, phone_num)
     if data_dict != None:
-        return req("http://host.docker.internal:5003/orders", "App.close_order", order_num=order_num, courier_id=data_dict["id"]).data.result
+        return req("http://ip_orders/orders", "App.close_order", order_num=order_num, courier_id=data_dict["id"]).data.result
     return "-1"
 
 @app.route('/send_location/<string:phone_num>/<string:password>', methods=['POST'])
@@ -69,7 +69,7 @@ def send_location(phone_num, password):
     data_dict = login_courier(password, phone_num)
     if data_dict != None and "geo_code_1" in d and "geo_code_2" in d:
         # TODO Переделать на RabbitMQ
-        return req("http://host.docker.internal:5004/couriers", "App.send_location", 
+        return req("http://ip_couriers/couriers", "App.send_location", 
         courier_id=data_dict["id"], geo_coord_1=d["geo_code_1"], geo_coord_2=d["geo_code_2"]).data.result
     else:
         return "-1"
@@ -86,7 +86,7 @@ def save_sign(phone_num, password, order_num):
         if data_dict != None:
             print("auth")
             connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host='host.docker.internal'))
+                pika.ConnectionParameters(host='rabbit_mq'))
             channel = connection.channel()
             channel.queue_declare(queue='save_sign')
             sign_data = {
